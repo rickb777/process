@@ -43,12 +43,6 @@ Or mix this with a pool of several identical goroutines using GoN:
 
 That's it.
 
-## For Discussion
-
-An obvious extension for this tool might be to handle nested process hierarchies. Is
-there a strong need for this? I'm not sure, so it can wait until I am persuaded.
-I you have a view on this, why not submit an issue?
-
 ## Licence
 
 [MIT](LICENSE)
