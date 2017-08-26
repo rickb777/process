@@ -1,13 +1,20 @@
-# process
-[![Build Status](https://api.travis-ci.org/rickb777/process.png)](https://travis-ci.org/rickb777/process/builds)
+# process - goroutines as contained processes
+
 [![GoDoc](https://godoc.org/github.com/rickb777/process?status.svg)](https://godoc.org/github.com/rickb777/process)
+[![Build Status](https://api.travis-ci.org/rickb777/process.png)](https://travis-ci.org/rickb777/process/builds)
+[![Coverage Status](https://coveralls.io/repos/github/rickb777/process/badge.svg?branch=master&service=github)](https://coveralls.io/github/rickb777/process?branch=master)
+[![Go Report Card](https://goreportcard.com/badge/github.com/rickb777/process)](https://goreportcard.com/report/github.com/rickb777/process)
 
 Simple fork and join of goroutines - easy to use; no fuss.
 
 Puts the 'P' of CSP back into Go.
 
-All it does is handle the join when a group of goroutines terminate. Internally, a `sync.WaitGroup` is
+All it does is **handle the join when a group of goroutines terminate**. Internally, a `sync.WaitGroup` is
 administered for you. There's not much to it but it makes your job easier.
+
+## Installation
+
+    go get -u github.com/rickb777/process
 
 ## How To
 
@@ -39,7 +46,7 @@ That's it.
 ## For Discussion
 
 An obvious extension for this tool might be to handle nested process hierarchies. Is
-there a strong need for this? I'm not surer, so it can wait until I am persuaded.
+there a strong need for this? I'm not sure, so it can wait until I am persuaded.
 I you have a view on this, why not submit an issue?
 
 ## Licence
