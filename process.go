@@ -4,7 +4,6 @@
 // Following the CSP practice, these goroutines are called 'processes' - the 'P' in
 // Communicating Sequential Processes. But this term is not to be confused with other
 // usages, especially of processes within operating systems; the latter are unrelated.
-
 package process
 
 import "sync"
