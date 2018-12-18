@@ -38,12 +38,26 @@ func TestProcessGroup(t *testing.T) {
 	}
 }
 
-func TestProcessGroupN(t *testing.T) {
+func TestProcessGroupN0(t *testing.T) {
 	c := make(chan int)
 	pg := NewGroup()
 
-	pg.GoN(2, func() { c <- 1 })
+	pg.GoN(3, func() { c <- 1 })
 
+	<-c
+	<-c
+	<-c
+
+	pg.Join() // no deadlock expected
+}
+
+func TestProcessGroupN1(t *testing.T) {
+	c := make(chan int)
+	pg := NewGroup()
+
+	pg.GoN1(3, func(i int) { c <- 1 })
+
+	<-c
 	<-c
 	<-c
 

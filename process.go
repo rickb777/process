@@ -25,10 +25,25 @@ func NewGroup() *ProcessGroup {
 }
 
 // GoN starts n identical processes (i.e. goroutines) within this group.
+// The processes are provided as zero-argument functions.
 // This method can be called several times with different functions as needed.
 func (pg *ProcessGroup) GoN(n int, process func()) {
-	for i := 0; i < n; i++ {
+	for i := 1; i <= n; i++ {
 		pg.Go(process)
+	}
+}
+
+// GoN1 starts n identical processes (i.e. goroutines) within this group.
+// The processes are provided as one-argument functions.
+// This method can be called several times with different functions as needed.
+// The process argument receives the index in the sequence, starting from one.
+func (pg *ProcessGroup) GoN1(n int, process func(j int)) {
+	for i := 1; i <= n; i++ {
+		func(j int) {
+			pg.Go(func() {
+				process(j)
+			})
+		}(i)
 	}
 }
 
