@@ -44,9 +44,14 @@ func TestProcessGroupN0(t *testing.T) {
 
 	pg.GoN(3, func() { c <- 1 })
 
-	<-c
-	<-c
-	<-c
+	var sum int
+	sum += <-c
+	sum += <-c
+	sum += <-c
+
+	if sum != 3 {
+		t.Errorf("Got %d", sum)
+	}
 
 	pg.Join() // no deadlock expected
 }
@@ -55,11 +60,18 @@ func TestProcessGroupN1(t *testing.T) {
 	c := make(chan int)
 	pg := NewGroup()
 
-	pg.GoN1(3, func(i int) { c <- 1 })
+	pg.GoN1(5, func(i int) { c <- i })
 
-	<-c
-	<-c
-	<-c
+	var sum int
+	sum += <-c
+	sum += <-c
+	sum += <-c
+	sum += <-c
+	sum += <-c
+
+	if sum != 15 {
+		t.Errorf("Got %d", sum)
+	}
 
 	pg.Join() // no deadlock expected
 }
