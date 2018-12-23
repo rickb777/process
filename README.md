@@ -18,7 +18,7 @@ administered for you. There's not much to it but it makes your job easier.
 
 ## How To
 
-Just create a new group then tell some functions to Go:
+Just create a new group then tell some functions to `Go`:
 
 ```
 	processes := process.NewGroup()
@@ -31,7 +31,10 @@ Just create a new group then tell some functions to Go:
 	processes.Join()
 ```
 
-Or mix this with a pool of several identical goroutines using GoN:
+The `Join()` method does not terminate until all the sub-processes have terminated. In other words,
+the code that follows has to wait until then.
+
+The second way to use process groups is to start a pool of several identical goroutines using `GoN`:
 
 ```
 	processes := process.NewGroup()
@@ -41,7 +44,34 @@ Or mix this with a pool of several identical goroutines using GoN:
 	processes.Join()
 ```
 
-That's it.
+You can of course mix `Go` and `GoN` in the same process group:
+```
+	processes := process.NewGroup()
+	processes.GoN(3, func() {
+		...  some work, just a normal goroutine function
+	})
+	processes.Go(func() {
+		...  some other work
+	})
+	processes.Join()
+```
+
+`GoN1` is a variant of `GoN` that provides the index counter as a parameter, counting up from 1:
+
+```
+	processes := process.NewGroup()
+	processes.GoN1(3, func(i int) {
+		...  some work, just a normal goroutine function
+	})
+	processes.Join()
+```
+
+## Hierarchies
+
+A process group contains processes. These processes can also be process groups, or they can contain process
+groups. As long as the `Join` calls are positioned so that each group terminates tidily, the nesting should
+*just work* (TM).
+
 
 ## Licence
 
