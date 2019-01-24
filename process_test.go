@@ -4,6 +4,13 @@ import (
 	"testing"
 )
 
+func TestEmpty(t *testing.T) {
+	pg := NewGroup()
+
+	// expect no runtime error nor deadlock
+	pg.Join()
+}
+
 func TestProcessGroup(t *testing.T) {
 	pg := NewGroup()
 

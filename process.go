@@ -70,5 +70,7 @@ func (pg *ProcessGroup) Go(process func()) {
 // It is up to the client code to prevent this by ensuring that all the child
 // processes (goroutines) terminate cleanly.
 func (pg *ProcessGroup) Join() {
-	pg.joiner.Wait()
+	if pg.joiner != nil {
+		pg.joiner.Wait()
+	}
 }
