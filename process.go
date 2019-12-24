@@ -21,7 +21,7 @@ type ProcessGroup struct {
 // NewGroup creates a new empty process group. Use Go and GoN to start processes
 // (i.e. goroutines) within the group.
 func NewGroup() *ProcessGroup {
-	return &ProcessGroup{}
+	return &ProcessGroup{joiner: &sync.WaitGroup{}}
 }
 
 // GoN starts n identical processes (i.e. goroutines) within this group.
@@ -50,9 +50,6 @@ func (pg *ProcessGroup) GoN1(n int, process func(j int)) {
 // Go starts a single process (i.e. goroutine) within this group.
 // This method can be called several times with different functions as needed.
 func (pg *ProcessGroup) Go(process func()) {
-	if pg.joiner == nil {
-		pg.joiner = &sync.WaitGroup{}
-	}
 	pg.joiner.Add(1)
 	go func() {
 		defer pg.joiner.Done()
