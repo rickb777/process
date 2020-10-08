@@ -1,7 +1,7 @@
 # process - goroutines as contained processes
 
-[![GoDoc](https://godoc.org/github.com/rickb777/process?status.svg)](https://godoc.org/github.com/rickb777/process)
-[![Build Status](https://api.travis-ci.org/rickb777/process.png)](https://travis-ci.org/rickb777/process/builds)
+[![GoDoc](https://img.shields.io/badge/api-Godoc-blue.svg)](https://pkg.go.dev/github.com/rickb777/process)
+[![Build Status](https://api.travis-ci.org/rickb777/process.svg?branch=master)](https://travis-ci.org/rickb777/process)
 [![Coverage Status](https://coveralls.io/repos/github/rickb777/process/badge.svg?branch=master&service=github)](https://coveralls.io/github/rickb777/process?branch=master)
 [![Go Report Card](https://goreportcard.com/badge/github.com/rickb777/process)](https://goreportcard.com/report/github.com/rickb777/process)
 
