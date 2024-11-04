@@ -52,7 +52,7 @@ groups. As long as the `Wait` calls are positioned so that each group terminates
 ## What's New in Version 2
 
 * Several API functions were deleted to keep things simple.
-* New MaxConcurrency throttling feature was added.
+* New WorkQueue unlimited channel added
 
 ## Licence
 
