@@ -1,4 +1,4 @@
-module github.com/rickb777/process
+module github.com/rickb777/process/v2
 
 go 1.22
 
