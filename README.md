@@ -1,7 +1,7 @@
 # process - goroutines as contained processes
 
-[![GoDoc](https://img.shields.io/badge/api-Godoc-blue.svg)](https://pkg.go.dev/github.com/rickb777/process)
-[![Go Report Card](https://goreportcard.com/badge/github.com/rickb777/process)](https://goreportcard.com/report/github.com/rickb777/process)
+[![GoDoc](https://img.shields.io/badge/api-Godoc-blue.svg)](https://pkg.go.dev/github.com/rickb777/process/v2)
+[![Go Report Card](https://goreportcard.com/badge/github.com/rickb777/process/v2)](https://goreportcard.com/report/github.com/rickb777/process/v2)
 
 Simple fork and join of goroutines - easy to use; no fuss.
 
@@ -14,7 +14,7 @@ You can also limit the maximum number of concurrent goroutines, e.g. to create a
 
 ## Installation
 
-    go get -u github.com/rickb777/process
+    go get -u github.com/rickb777/process/v2
 
 ## ProcessGroup
 
@@ -35,7 +35,10 @@ Another useful case is to create a fixed-size pool of goroutines. How to do this
 other examples in the documentation. This is an easy and simple way to limit concurrency for some
 reason.
 
-## WorkQueue
+The process function can be a closure referring to variables in scope. Channels are a useful way
+to return results.
+
+## WorkQueue - channel with a very long buffer
 
 WorkQueue is a function that returns a channel with unlimited buffering. This is useful for work queues
 in channel networks that might otherwise deadlock because they contain loops.
@@ -45,14 +48,13 @@ A WorkQueue is particularly useful when combined with fixed-size goroutine pools
 ## Hierarchies
 
 A process group contains processes. These processes can also be process groups, or they can contain process
-groups. As long as the `Wait` calls are positioned so that each group terminates tidily, the nesting should
-*just work* (TM).
-
+groups. As long as the `Wait` calls are positioned so that each group terminates tidily, the nesting will
+*just work*.
 
 ## What's New in Version 2
 
 * Several API functions were deleted to keep things simple.
-* New WorkQueue unlimited channel added
+* New WorkQueue unlimited channel was added.
 
 ## Licence
 
