@@ -31,10 +31,11 @@ func WorkQueue[T any](initialSize uint) (chan<- T, <-chan T) {
 					canIn = nil // start closing
 				} else if canOut == nil {
 					last = v
+					canOut = out
 				} else {
 					buffer.PushBack(v)
+					canOut = out
 				}
-				canOut = out
 
 			case canOut <- last:
 				if buffer.Len() > 0 {
