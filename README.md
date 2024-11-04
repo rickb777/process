@@ -10,11 +10,13 @@ Puts the 'P' of CSP back into Go.
 All it does is **handle the join when a group of goroutines terminate**. Internally, a `sync.WaitGroup` is
 administered for you. There's not much to it but it makes your job easier.
 
+You can also limit the maximum number of concurrent goroutines, e.g. to create a worker pool.
+
 ## Installation
 
     go get -u github.com/rickb777/process
 
-## How To
+## ProcessGroup
 
 Just create a new group then tell some functions to `Go`:
 
@@ -26,50 +28,31 @@ Just create a new group then tell some functions to `Go`:
 	processes.Go(func() {
 		...  some other work
 	})
-	processes.Join()
+	processes.Wait()
 ```
 
-The `Join()` method does not terminate until all the sub-processes have terminated. In other words,
-the code that follows has to wait until then.
+Another useful case is to create a fixed-size pool of goroutines. How to do this is shown in the
+other examples in the documentation. This is an easy and simple way to limit concurrency for some
+reason.
 
-The second way to use process groups is to start a pool of several identical goroutines using `GoN`:
+## WorkQueue
 
-```
-	processes := process.NewGroup()
-	processes.GoN(3, func() {
-		...  some work, just a normal goroutine function
-	})
-	processes.Join()
-```
+WorkQueue is a function that returns a channel with unlimited buffering. This is useful for work queues
+in channel networks that might otherwise deadlock because they contain loops.
 
-You can of course mix `Go` and `GoN` in the same process group:
-```
-	processes := process.NewGroup()
-	processes.GoN(3, func() {
-		...  some work, just a normal goroutine function
-	})
-	processes.Go(func() {
-		...  some other work
-	})
-	processes.Join()
-```
-
-`GoN1` is a variant of `GoN` that provides the index counter as a parameter, counting up from 1:
-
-```
-	processes := process.NewGroup()
-	processes.GoN1(3, func(i int) {
-		...  some work, just a normal goroutine function
-	})
-	processes.Join()
-```
+A WorkQueue is particularly useful when combined with fixed-size goroutine pools, as described above.
 
 ## Hierarchies
 
 A process group contains processes. These processes can also be process groups, or they can contain process
-groups. As long as the `Join` calls are positioned so that each group terminates tidily, the nesting should
+groups. As long as the `Wait` calls are positioned so that each group terminates tidily, the nesting should
 *just work* (TM).
 
+
+## What's New in Version 2
+
+* Several API functions were deleted to keep things simple.
+* New MaxConcurrency throttling feature was added.
 
 ## Licence
 

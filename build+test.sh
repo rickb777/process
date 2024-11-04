@@ -6,8 +6,9 @@ if ! type -p goveralls; then
   go get github.com/mattn/goveralls
 fi
 
-echo date...
 go test -v -race .
 go test -v -covermode=count -coverprofile=date.out .
 go tool cover -func=date.out
 [ -z "$COVERALLS_TOKEN" ] || goveralls -coverprofile=date.out -service=travis-ci -repotoken $COVERALLS_TOKEN
+
+go vet ./...

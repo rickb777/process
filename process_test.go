@@ -2,6 +2,7 @@ package process
 
 import (
 	"errors"
+	"fmt"
 	"strings"
 	"testing"
 )
@@ -15,10 +16,14 @@ func TestEmpty(t *testing.T) {
 	pg := NewGroup()
 
 	// expect no runtime error nor deadlock
-	pg.Join()
+	pg.Wait()
+
+	if pg.Err() != nil {
+		t.Fatalf("expected no error")
+	}
 }
 
-func TestProcessGroup(t *testing.T) {
+func TestProcessGroup_Go_GoE(t *testing.T) {
 	pg := NewGroup()
 
 	// expect to be able to make more than one pass
@@ -31,7 +36,8 @@ func TestProcessGroup(t *testing.T) {
 		pg.GoE(func() error { n4 = true; return e1 })
 		pg.GoE(func() error { n5 = true; return e2 })
 
-		em := pg.JoinE().Error()
+		pg.Wait() // no deadlock expected
+		e := pg.Err()
 
 		if !n1 {
 			t.Errorf("no n1")
@@ -48,7 +54,12 @@ func TestProcessGroup(t *testing.T) {
 		if !n5 {
 			t.Errorf("no n5")
 		}
-		if strings.Index(em, "2 errors: ") < 0 {
+		if e == nil {
+			t.Fatalf("no err")
+		}
+
+		em := e.Error()
+		if len(em) < 5 {
 			t.Errorf("no count: %q", em)
 		}
 		if strings.Index(em, "E1") < 0 {
@@ -56,6 +67,10 @@ func TestProcessGroup(t *testing.T) {
 		}
 		if strings.Index(em, "E2") < 0 {
 			t.Errorf("no E2: %q", em)
+		}
+
+		if s := pg.Size(); s != 0 {
+			t.Errorf("size is %d", s)
 		}
 	}
 }
@@ -72,63 +87,17 @@ func TestProcessGroup(t *testing.T) {
 //	  c ! 1
 //	c ? x
 //	c ? x
-func TestProcessGroupN(t *testing.T) {
+func TestProcessGroup_GoN(t *testing.T) {
 	c := make(chan int)
 	pg := NewGroup()
 
 	// expect to be able to make more than one pass
 	for p := 0; p < 100; p++ {
-		pg.GoN(5, func() { c <- 1 })
+		pg.GoN(5, func(i int) { c <- i })
 
-		var sum int
-		sum += <-c
-		sum += <-c
-		sum += <-c
-		sum += <-c
-		sum += <-c
-
-		if sum != 5 {
-			t.Errorf("Got %d", sum)
+		if s := pg.Size(); s == 0 {
+			t.Errorf("size is 0")
 		}
-
-		pg.Join() // no deadlock expected
-	}
-}
-
-func TestProcessGroupNE(t *testing.T) {
-	c := make(chan int)
-	pg := NewGroup()
-
-	// expect to be able to make more than one pass
-	for p := 0; p < 100; p++ {
-		pg.GoNE(5, func() error { c <- 1; return e1 })
-
-		var sum int
-		sum += <-c
-		sum += <-c
-		sum += <-c
-		sum += <-c
-		sum += <-c
-
-		if sum != 5 {
-			t.Errorf("Got %d", sum)
-		}
-
-		em := pg.JoinE().Error() // no deadlock expected
-
-		if em != "5 errors: E1; E1; E1; E1; E1" {
-			t.Errorf("bad errors: %q", em)
-		}
-	}
-}
-
-func TestProcessGroupN0(t *testing.T) {
-	c := make(chan int)
-	pg := NewGroup()
-
-	// expect to be able to make more than one pass
-	for p := 0; p < 100; p++ {
-		pg.GoN0(5, func(i int) { c <- i })
 
 		var sum int
 		sum += <-c
@@ -141,17 +110,21 @@ func TestProcessGroupN0(t *testing.T) {
 			t.Errorf("Got %d", sum)
 		}
 
-		pg.Join() // no deadlock expected
+		pg.Wait() // no deadlock expected
+
+		if s := pg.Size(); s != 0 {
+			t.Errorf("size is %d", s)
+		}
 	}
 }
 
-func TestProcessGroupN0E(t *testing.T) {
+func TestProcessGroup_GoNE(t *testing.T) {
 	c := make(chan int)
 	pg := NewGroup()
 
 	// expect to be able to make more than one pass
 	for p := 0; p < 100; p++ {
-		pg.GoN0E(5, func(i int) error { c <- i; return e1 })
+		pg.GoNE(5, func(i int) error { c <- i; return e1 })
 
 		var sum int
 		sum += <-c
@@ -164,59 +137,15 @@ func TestProcessGroupN0E(t *testing.T) {
 			t.Errorf("Got %d", sum)
 		}
 
-		em := pg.JoinE().Error() // no deadlock expected
+		pg.Wait() // no deadlock expected
 
-		if em != "5 errors: E1; E1; E1; E1; E1" {
-			t.Errorf("bad errors: %q", em)
-		}
-	}
-}
-
-func TestProcessGroupN1(t *testing.T) {
-	c := make(chan int)
-	pg := NewGroup()
-
-	// expect to be able to make more than one pass
-	for p := 0; p < 100; p++ {
-		pg.GoN1(5, func(i int) { c <- i })
-
-		var sum int
-		sum += <-c
-		sum += <-c
-		sum += <-c
-		sum += <-c
-		sum += <-c
-
-		if sum != 15 {
-			t.Errorf("Got %d", sum)
+		e := pg.Err()
+		if e == nil {
+			t.Fatalf("no err")
 		}
 
-		pg.Join() // no deadlock expected
-	}
-}
-
-func TestProcessGroupN1E(t *testing.T) {
-	c := make(chan int)
-	pg := NewGroup()
-
-	// expect to be able to make more than one pass
-	for p := 0; p < 100; p++ {
-		pg.GoN1E(5, func(i int) error { c <- i; return e1 })
-
-		var sum int
-		sum += <-c
-		sum += <-c
-		sum += <-c
-		sum += <-c
-		sum += <-c
-
-		if sum != 15 {
-			t.Errorf("Got %d", sum)
-		}
-
-		em := pg.JoinE().Error() // no deadlock expected
-
-		if em != "5 errors: E1; E1; E1; E1; E1" {
+		em := e.Error()
+		if em != "E1\nE1\nE1\nE1\nE1" {
 			t.Errorf("bad errors: %q", em)
 		}
 	}
@@ -258,7 +187,7 @@ func TestProcessGroupNested(t *testing.T) {
 			c1 <- 1
 			<-c2
 			<-c2
-			inner.Join()
+			inner.Wait()
 		})
 
 		inner.Go(func() {
@@ -272,6 +201,44 @@ func TestProcessGroupNested(t *testing.T) {
 		<-c1
 		<-c1
 
-		pg.Join() // no deadlock expected
+		pg.Wait() // no deadlock expected
 	}
+}
+
+func TestLongChannel(t *testing.T) {
+	in, out := WorkQueue[int](16)
+	end := make(chan bool)
+
+	in <- 1
+	if <-out != 1 {
+		t.Fatalf("expected 1")
+	}
+
+	in <- 2
+	in <- 3
+	in <- 4
+	in <- 5
+
+	go func() {
+		defer func() { end <- true }()
+
+		var act int
+		exp := 2
+		for act = range out {
+			if act != exp {
+				panic(fmt.Sprintf("got %d, expected %d", act, exp))
+			}
+			exp++
+		}
+		if act != 999 {
+			panic(fmt.Sprintf("ended with %d; expected 999", act))
+		}
+	}()
+
+	for i := 6; i < 1000; i++ {
+		in <- i
+	}
+
+	close(in)
+	<-end
 }
