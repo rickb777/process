@@ -2,7 +2,7 @@
 
 //go:build mage
 
-// Build steps for the expect API:
+// Build steps for the process API:
 package main
 
 import (
@@ -12,12 +12,6 @@ import (
 var Default = Build
 
 func Build() error {
-	if err := sh.RunV("go", "mod", "download"); err != nil {
-		return err
-	}
-	if err := sh.RunV("go", "mod", "tidy"); err != nil {
-		return err
-	}
 	if err := sh.RunV("go", "test", "-race", "."); err != nil {
 		return err
 	}
