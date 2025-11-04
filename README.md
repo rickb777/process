@@ -2,6 +2,9 @@
 
 [![GoDoc](https://img.shields.io/badge/api-Godoc-blue.svg)](https://pkg.go.dev/github.com/rickb777/process/v2)
 [![Go Report Card](https://goreportcard.com/badge/github.com/rickb777/process/v2)](https://goreportcard.com/report/github.com/rickb777/process/v2)
+[![Build](https://github.com/rickb777/process/actions/workflows/go.yml/badge.svg)](https://github.com/rickb777/process/actions)
+[![Coverage](https://coveralls.io/repos/github/rickb777/process/badge.svg?branch=main)](https://coveralls.io/github/rickb777/process?branch=main)
+[![Issues](https://img.shields.io/github/issues/rickb777/process.svg)](https://github.com/rickb777/process/issues)
 
 Simple fork and join of goroutines - easy to use; no fuss.
 
