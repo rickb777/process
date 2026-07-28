@@ -27,10 +27,3 @@ jobs:
 
       - name: Test
         run: mage build coverage
-
-      - name: Coveralls
-        uses: coverallsapp/github-action@v2
-        with:
-          file: coverage.out
-          format: golang
-          debug: false
